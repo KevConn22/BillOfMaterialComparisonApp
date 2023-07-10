@@ -57,7 +57,7 @@ def remove_leading_zeros(list_characters):
       break
 
 #Removes leading zeros from inventor_pn list (CSV from IFS does so, so must do so here)
-#OBSELETE as of 7/10/23
+#OBSELETE as of 7/10/23; implemented directly into "compare" function
 def update_list_removed_zeros():
   for i in range(len(inv_list)):
     number_list = list(inv_list[i])
@@ -65,19 +65,7 @@ def update_list_removed_zeros():
     new_number = ''.join(number_list)
     inv_list[i] = new_number
 
-#Prints output dataframes for Inventor and IFS differences
-def print_output1(df1):
-  print("In Inventor, not IFS:")
-  print("")
-  print(df1)
-
-def print_output2(df2):
-  print("In IFS, not Inventor:")
-  print("")
-  print(df2)
-  print("")
-
-#Function for overall comparison, taking into account all four functions listed above
+#Function for overall comparison, taking into account all functions listed above
 #FUNCTION WORKS WHEN PASSED BOTH PARAMETERS AS STRINGS
 def compare(*args):
   inv_list = create_inv_list(inv_filename.get() + ".csv")
@@ -92,11 +80,12 @@ def compare(*args):
   ifs_list = [i for i in ifs_list if i not in common]
   inventor_df = pd.DataFrame(inv_list, columns=['Part Number'])
   ifs_df = pd.DataFrame(ifs_list, columns=['Part Number'])
-  print_output1(inventor_df)
-  print("")
-  print_output2(ifs_df)
+  inventor.set(inventor_df)
+  ifs.set(ifs_df)
 
-#TEST CASE: compare("Inventor.csv", "IFS.csv")
+#Function that handles the comparison and subsequent export of the p/n and qty data
+def export():
+  pass 
 
 #Creates the GUI using Tkinter
 root = Tk()
@@ -126,10 +115,35 @@ ttk.Button(mainframe, text="Compare", command=compare).grid(column=2, row=4, sti
 ttk.Label(mainframe, text="Inventor BOM Filename: ").grid(column=1, row=2, sticky=W)
 ttk.Label(mainframe, text="IFS BOM Filename: ").grid(column=1, row=3, sticky=E)
 
+#Creates labels for output categorization
+ttk.Label(mainframe, text="In Inventor, not IFS: ").grid(column=1, row=5, sticky=E)
+ttk.Label(mainframe, text="In IFS, not Inventor: ").grid(column=2, row=5, sticky=W)
+
+#Creates final output areas and variables
+inventor = StringVar()
+ifs = StringVar()
+
+ttk.Label(mainframe, textvariable=inventor).grid(column=1, row=6, sticky= (N))
+ttk.Label(mainframe, textvariable=ifs).grid(column=2, row=6, sticky=(N))
+
+#Creates button for export to external file
+ttk.Button(mainframe, text="Export to CSV", command=export).grid(column=1, row=4, sticky=E)
+
 #Makes it look more aesthetic by adding padding around each grid element
 for child in mainframe.winfo_children(): 
     child.grid_configure(padx=10, pady=10)
 
+#Binds "enter" to "Compare" button
 root.bind("<Return>", compare)
 
+#Runs the tkinter program to keep window open
 root.mainloop()
+
+
+
+
+
+
+#Personal note to Kevin - check out https://stackoverflow.com/questions/66663179/how-to-use-windows-file-explorer-to-select-and-return-a-directory-using-python#:~:text=You%20can%20use%20Python's%20Tkinter,standard%20Windows%20folder%20selection%20dialog.&text=You%20can%20also%20simplify%20this%20and%20write%20tkinter.Tk().
+
+#This offers an explanation on potentially opening the standard Windows file library for file selection. This would be SO CLUTCH in making this more functional in the long-term instead of having to input. Tie it to buttons called "Select..." to pick each individual one for Inv/IFS. Implement by EOD Monday.
