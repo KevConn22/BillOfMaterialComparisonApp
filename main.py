@@ -2,6 +2,7 @@ import pandas as pd
 from tkinter import *
 from tkinter import ttk
 import csv
+import openpyxl
 
 """
 For reference, this code was created with help from a variety of sources. Due to my lack of prior experience with Tkinter, a lot of helpful information was found at tkdocs.com/tutorial, including the use of some prior-developed code in the tutorial. Furthermore, a few of my questions were answered via StackOverflow browsing, and several other forums helped fill in the gaps where necessary.
@@ -133,7 +134,9 @@ def create_dif_list(f1, f2):
     for j in range(len(ifs_master)):
       if inv_master[i][0] == ifs_master[j][0] and inv_master[i][1] != ifs_master[j][1]:
         list_differences.append([inv_master[i][0], inv_master[i][1], ifs_master[j][1]])
-    
+
+  return list_differences
+  
 #Removes leading zeros from inventor_pn list (CSV from IFS does so, so must do so here)
 #OBSELETE as of 7/10/23; implemented directly into "compare" function
 def update_list_removed_zeros():
@@ -146,8 +149,15 @@ def update_list_removed_zeros():
 #Function for overall comparison, taking into account all functions listed above
 #FUNCTION WORKS WHEN PASSED BOTH PARAMETERS AS STRINGS
 def compare(*args):
+  inv_name = str(inv_filename.get() + ".csv")
+  ifs_name = str(ifs_filename.get() + ".csv")
+  
   inv_list = create_inv_list(inv_filename.get() + ".csv")
   ifs_list = create_ifs_list(ifs_filename.get() + ".csv")
+  
+  list_qty_dif = create_dif_list(inv_name, ifs_name)
+  for i in range(len(list_qty_dif)):
+    list_qty_dif[i] = [list_qty_dif[i][0], "Y", "Y", list_qty_dif[i][1], list_qty_dif[i][2]]
   inv_qty = inv_qty_list(inv_filename.get() + ".csv")
   ifs_qty = ifs_qty_list(ifs_filename.get() + ".csv")
   
@@ -157,10 +167,7 @@ def compare(*args):
     new_number = ''.join(number_list)
     inv_list[i] = new_number
   #common = set(inv_list).intersection(set(ifs_list))
-
-  print(inv_list)
-  print(len(inv_list))
-
+  
   inv_idx_list = []
   ifs_idx_list = []
   
@@ -175,43 +182,93 @@ def compare(*args):
   
   for i in range(len(inv_list)):
     for item in inv_idx_list:
-      if i != item:
-        inv_master.append([inv_list[i], inv_qty[i]])
+      if i == item:
+        inv_list[i] = "?"
+  for i in range(len(inv_list)):
+    if inv_list[i] != "?":
+      inv_master.append([inv_list[i], "Y", "N", inv_qty[i], 0])
+
   for i in range(len(ifs_list)):
-    ifs_master.append([ifs_list[i], ifs_qty[i]])
+    for item in ifs_idx_list:
+      if i == item:
+        ifs_list[i] = "&"
+  for i in range(len(ifs_list)):
+    if ifs_list[i] != "&":
+      ifs_master.append([ifs_list[i], "N", "Y", 0, ifs_qty[i]])
   
-  inventor_df = pd.DataFrame(inv_master, columns=['Part Number', 'QTY'])
-  ifs_df = pd.DataFrame(ifs_master, columns=['Part Number', 'QTY'])
-  inventor.set(inventor_df)
-  ifs.set(ifs_df)
+  inventor_df = pd.DataFrame(inv_master, columns=['Part Number', 'In Inventor?', 'In IFS?', 'Inventor Quantity', 'IFS Quantity'])
+  ifs_df = pd.DataFrame(ifs_master, columns=['Part Number', 'In Inventor?', 'In IFS?', 'Inventor Quantity', 'IFS Quantity'])
+  qty_df = pd.DataFrame(list_qty_dif, columns=['Part Number', 'In Inventor?', 'In IFS?', 'Inventor Quantity', 'IFS Quantity'])
+  #inventor.set(inventor_df)
+  comparison_csv_df = [inventor_df, ifs_df, qty_df]
+  comparison_final = pd.concat(comparison_csv_df)
+  data.set(comparison_final)
 
 #Function that handles the comparison and subsequent export of the p/n and qty data
 def export(*args):
   #Copy of code from compare in order to properly pass the information to the comparison list/dataframe
+  inv_name = str(inv_filename.get() + ".csv")
+  ifs_name = str(ifs_filename.get() + ".csv")
+  
   inv_list = create_inv_list(inv_filename.get() + ".csv")
   ifs_list = create_ifs_list(ifs_filename.get() + ".csv")
+  
+  list_qty_dif = create_dif_list(inv_name, ifs_name)
+  for i in range(len(list_qty_dif)):
+    list_qty_dif[i] = [list_qty_dif[i][0], "Y", "Y", list_qty_dif[i][1], list_qty_dif[i][2]]
+    
+  inv_qty = inv_qty_list(inv_filename.get() + ".csv")
+  ifs_qty = ifs_qty_list(ifs_filename.get() + ".csv")
+  
   for i in range(len(inv_list)):
     number_list = list(inv_list[i])
     remove_leading_zeros(number_list)
     new_number = ''.join(number_list)
     inv_list[i] = new_number
-  common = set(inv_list).intersection(set(ifs_list))
-  inv_list = [i for i in inv_list if i not in common]
-  ifs_list = [i for i in ifs_list if i not in common]
-  inventor_df = pd.DataFrame(inv_list, columns=['Part Number'])
-  ifs_df = pd.DataFrame(ifs_list, columns=['Part Number'])
-  inventor.set(inventor_df)
-  ifs.set(ifs_df)
-  #New code for writing into new local CSV file
-  #Change to offer implementation to select the file location with Windows Explorer at home
-  inventor_csv = inventor_df.to_csv("tempInventor.csv", sep='\t')
-  ifs_csv = ifs_df.to_csv("tempIFS.csv", sep='\t')
+  #common = set(inv_list).intersection(set(ifs_list))
   
+  inv_idx_list = []
+  ifs_idx_list = []
+  
+  for i in range(len(inv_list)):
+    for j in range(len(ifs_list)):
+      if inv_list[i] == ifs_list[j]:
+        inv_idx_list.append(i)
+        ifs_idx_list.append(j)
+  
+  inv_master = []
+  ifs_master = []
+  
+  for i in range(len(inv_list)):
+    for item in inv_idx_list:
+      if i == item:
+        inv_list[i] = "?"
+  for i in range(len(inv_list)):
+    if inv_list[i] != "?":
+      inv_master.append([inv_list[i], "Y", "N", inv_qty[i], 0])
 
+  for i in range(len(ifs_list)):
+    for item in ifs_idx_list:
+      if i == item:
+        ifs_list[i] = "&"
+  for i in range(len(ifs_list)):
+    if ifs_list[i] != "&":
+      ifs_master.append([ifs_list[i], "N", "Y", 0, ifs_qty[i]])
+  
+  inventor_df = pd.DataFrame(inv_master, columns=['Part Number', 'In Inventor?', 'In IFS?', 'Inventor Quantity', 'IFS Quantity'])
+  ifs_df = pd.DataFrame(ifs_master, columns=['Part Number', 'In Inventor?', 'In IFS?', 'Inventor Quantity', 'IFS Quantity'])
+  qty_df = pd.DataFrame(list_qty_dif, columns=['Part Number', 'In Inventor?', 'In IFS?', 'Inventor Quantity', 'IFS Quantity'])
+
+  #Codes to write into a CSV file
+  comparison_csv_df = [inventor_df, ifs_df, qty_df]
+  comparison_final = pd.concat(comparison_csv_df)
+  print(comparison_final)
+  
+  comparison_final.to_excel("Final.xlsx", sheet_name="Sheet 1", index=False)
+  
 #Creates the GUI using Tkinter
 root = Tk()
 root.title("Inventor v. IFS BOM Comparison")
-root.geometry("360x400")
 
 #Sets basic mainframe grid to be used in initial screen
 mainframe = ttk.Frame(root, padding="3 3 12 12")
@@ -222,33 +279,26 @@ root.rowconfigure(0, weight=1)
 #Creates the input location for the Inventor filename
 inv_filename = StringVar()
 inv_filename_entry = ttk.Entry(mainframe, width=12, textvariable=inv_filename)
-inv_filename_entry.grid(column=2, row = 2, sticky=(W, E))
+inv_filename_entry.grid(column=3, row = 2, sticky=(W, E))
 
 #Creates the input location for the IFS filename
 ifs_filename = StringVar()
 inv_filename_entry = ttk.Entry(mainframe, width=12, textvariable=ifs_filename)
-inv_filename_entry.grid(column=2, row=3, sticky=(W, E))
+inv_filename_entry.grid(column=3, row=4, sticky=(W, E))
 
 #Creates the submit button (hate this button.)
-ttk.Button(mainframe, text="Quick Compare (Enter)", command=compare).grid(column=2, row=4, sticky=W)
+ttk.Button(mainframe, text="Quick Compare (Enter)", command=compare).grid(column=3, row=5, sticky=W)
 
 #Creates the labels for IFS and Inventor filename submission boxes
-ttk.Label(mainframe, text="Inventor BOM Filename: ").grid(column=1, row=2, sticky=E)
-ttk.Label(mainframe, text="IFS BOM Filename: ").grid(column=1, row=3, sticky=E)
-
-#Creates labels for output categorization
-ttk.Label(mainframe, text="In Inventor, not IFS: ").grid(column=1, row=5, sticky=E)
-ttk.Label(mainframe, text="In IFS, not Inventor: ").grid(column=2, row=5, sticky=W)
+ttk.Label(mainframe, text="Inventor BOM Filename: ").grid(column=3, row=1, sticky=N)
+ttk.Label(mainframe, text="IFS BOM Filename: ").grid(column=3, row=3, sticky=N)
 
 #Creates final output areas and variables
-inventor = StringVar()
-ifs = StringVar()
-
-ttk.Label(mainframe, textvariable=inventor).grid(column=1, row=6, sticky= (E,N))
-ttk.Label(mainframe, textvariable=ifs).grid(column=2, row=6, sticky=(E,N))
+data = StringVar()
+ttk.Label(mainframe,textvariable=data).grid(column=3, row=8, sticky=N)
 
 #Creates button for export to external file
-ttk.Button(mainframe, text="Compare/Export to CSV", command=export).grid(column=1, row=4, sticky=E)
+ttk.Button(mainframe, text="Compare/Export to CSV", command=export).grid(column=3, row=6, sticky=E)
 
 #Makes it look more aesthetic by adding padding around each grid element
 for child in mainframe.winfo_children(): 
