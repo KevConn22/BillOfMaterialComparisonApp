@@ -264,7 +264,7 @@ def export(*args):
   comparison_final = pd.concat(comparison_csv_df)
   print(comparison_final)
   
-  comparison_final.to_excel("Final.xlsx", sheet_name="Sheet 1", index=False)
+  comparison_final.to_csv("Final.csv", encoding='utf-8', index=False)
   
 #Creates the GUI using Tkinter
 root = Tk()
@@ -287,7 +287,7 @@ inv_filename_entry = ttk.Entry(mainframe, width=12, textvariable=ifs_filename)
 inv_filename_entry.grid(column=3, row=4, sticky=(W, E))
 
 #Creates the submit button (hate this button.)
-ttk.Button(mainframe, text="Quick Compare (Enter)", command=compare).grid(column=3, row=5, sticky=W)
+ttk.Button(mainframe, text="Quick Compare (Enter)", command=compare).grid(column=3, row=5, sticky=N)
 
 #Creates the labels for IFS and Inventor filename submission boxes
 ttk.Label(mainframe, text="Inventor BOM Filename: ").grid(column=3, row=1, sticky=N)
@@ -298,7 +298,7 @@ data = StringVar()
 ttk.Label(mainframe,textvariable=data).grid(column=3, row=8, sticky=N)
 
 #Creates button for export to external file
-ttk.Button(mainframe, text="Compare/Export to CSV", command=export).grid(column=3, row=6, sticky=E)
+ttk.Button(mainframe, text="Compare/Export to CSV", command=export).grid(column=3, row=6, sticky=N)
 
 #Makes it look more aesthetic by adding padding around each grid element
 for child in mainframe.winfo_children(): 
