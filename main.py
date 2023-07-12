@@ -5,6 +5,8 @@ import csv
 import openpyxl
 
 """
+https://docs.python.org/3/library/dialog.html
+
 For reference, this code was created with help from a variety of sources. Due to my lack of prior experience with Tkinter, a lot of helpful information was found at tkdocs.com/tutorial, including the use of some prior-developed code in the tutorial. Furthermore, a few of my questions were answered via StackOverflow browsing, and several other forums helped fill in the gaps where necessary.
 
 Psuedocoding:
@@ -273,7 +275,6 @@ def export(*args):
   #Codes to write into a CSV file
   comparison_csv_df = [inventor_df, ifs_df, qty_df]
   comparison_final = pd.concat(comparison_csv_df)
-  print(comparison_final)
   
   comparison_final.to_csv("BOM Comparison Results.csv", encoding='utf-8', index=False)
   
