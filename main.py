@@ -202,7 +202,18 @@ def compare(*args):
   #inventor.set(inventor_df)
   comparison_csv_df = [inventor_df, ifs_df, qty_df]
   comparison_final = pd.concat(comparison_csv_df)
-  data.set(comparison_final)
+
+  pn = comparison_final[['Part Number']].to_string(index=False)
+  inv = comparison_final[['In Inventor?']].to_string(index=False)
+  ifs = comparison_final[['In IFS?']].to_string(index=False)
+  inv_q = comparison_final[['Inventor Quantity']].to_string(index=False)
+  ifs_q = comparison_final[['IFS Quantity']].to_string(index=False)
+
+  number.set(pn)
+  inventor.set(inv)
+  ifs_internal.set(ifs)
+  inventor_q.set(inv_q)
+  ifs_internal_q.set(ifs_q)
 
 #Function that handles the comparison and subsequent export of the p/n and qty data
 def export(*args):
@@ -264,7 +275,7 @@ def export(*args):
   comparison_final = pd.concat(comparison_csv_df)
   print(comparison_final)
   
-  comparison_final.to_csv("Final.csv", encoding='utf-8', index=False)
+  comparison_final.to_csv("BOM Comparison Results.csv", encoding='utf-8', index=False)
   
 #Creates the GUI using Tkinter
 root = Tk()
@@ -294,8 +305,17 @@ ttk.Label(mainframe, text="Inventor BOM Filename: ").grid(column=3, row=1, stick
 ttk.Label(mainframe, text="IFS BOM Filename: ").grid(column=3, row=3, sticky=N)
 
 #Creates final output areas and variables
-data = StringVar()
-ttk.Label(mainframe,textvariable=data).grid(column=3, row=8, sticky=N)
+number = StringVar()
+inventor = StringVar()
+ifs_internal = StringVar()
+inventor_q = StringVar()
+ifs_internal_q = StringVar()
+
+ttk.Label(mainframe,textvariable=number).grid(column=1, row=8, sticky=E)
+ttk.Label(mainframe,textvariable=inventor).grid(column=2, row=8, sticky=E)
+ttk.Label(mainframe,textvariable=ifs_internal).grid(column=3, row=8, sticky=N)
+ttk.Label(mainframe,textvariable=inventor_q).grid(column=4, row=8, sticky=W)
+ttk.Label(mainframe,textvariable=ifs_internal_q).grid(column=5, row=8, sticky=W)
 
 #Creates button for export to external file
 ttk.Button(mainframe, text="Compare/Export to CSV", command=export).grid(column=3, row=6, sticky=N)
