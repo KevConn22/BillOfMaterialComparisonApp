@@ -5,9 +5,34 @@ import csv
 import openpyxl
 
 """
-https://docs.python.org/3/library/dialog.html
+-----------------------------------------------------------------------------------------------------
 
-For reference, this code was created with help from a variety of sources. Due to my lack of prior experience with Tkinter, a lot of helpful information was found at tkdocs.com/tutorial, including the use of some prior-developed code in the tutorial. Furthermore, a few of my questions were answered via StackOverflow browsing, and several other forums helped fill in the gaps where necessary.
+Foreword:
+
+Hey everyone.
+
+My name is Kevin Connell, and I am/was a Mechanical Engineering Intern at WestRock in Orlando, working from May 2023-August 2023. During my time there, I found that there was often a lack of precision between the 
+manufacturing and engineering departments, especially with parts being missing from the floor's MBOM that were on the EBOM, and vice versa.
+
+That being said, this code was created as a personal project for the further improvement of WestRock's Packaging Machinery & Automation (PMA) division. The overall purporse of this is to take two BOMs
+(one from Inventor, one from IFS) and compare them, returning a list of differences including differences in composition (for example, if a part number was found in Inventor but not IFS and vice versa) as well as 
+differences in quantity (for example, if IFS said there were 3 of part 12345 while Inventor said there were 2 of that part). The goal is to help quell the issue stated above, decreasing error across BOMs and easily
+identifying any errors if one is to arise. This will decrease production time, decrease errors, and decrease the amount of troubleshooting and painstaking line-by-line comparison on the engineering side when such
+an issue arrives.
+
+For reference, this code was created with help from a variety of sources. Due to my lack of prior experience with Tkinter, a lot of helpful information was found at tkdocs.com/tutorial, including the use of some 
+prior-developed code in the tutorial. Furthermore, a few of my questions were answered via StackOverflow browsing, and several other forums helped fill in the gaps where necessary.
+
+If you ever need revision on this code, feel free to update it as need be. Hopefully my documentation is thorough enough to make sense of each individual code block. If any questions arise, I have found these following
+sources to be incredibly beneficial in the development of this program:
+
+https://tkdocs.com/tutorial/index.html
+https://docs.python.org/3/library/dialog.html
+https://stackoverflow.com/questions/16923281/writing-a-pandas-dataframe-to-csv-file
+
+Should any more questions arise, you can reach me at kev.connell.22@gmail.com. Best of luck.
+
+-----------------------------------------------------------------------------------------------------
 
 Psuedocoding:
 
@@ -33,14 +58,7 @@ For Item in B:
 
 Any values that do not have a "True" designation therefore do not have a match in the other column, making them easy to tag after the fact.
 """
-"""root = Tk()
-root.title("Inventor/IFS CSV BOM Comparison")
 
-mainframe = ttk.Frame(root, padding="3 3 12 12")
-mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
-root.columnconfigure(0, weight=1)
-root.rowconfigure(0, weight=1)
-"""
 #Creates the dataframe for each particular document, both the Inventor and IFS CSVs.
 def create_inv_list(filename):
   dI = pd.read_csv(filename, usecols=['Part Number', 'Description', 'QTY'])
