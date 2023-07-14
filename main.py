@@ -58,7 +58,6 @@ For Item in B:
 
 Any values that do not have a "True" designation therefore do not have a match in the other column, making them easy to tag after the fact.
 """
-
 #Creates the dataframe for each particular document, both the Inventor and IFS CSVs.
 def create_inv_list(filename):
   dI = pd.read_csv(filename, usecols=['Part Number', 'Description', 'QTY'])
