@@ -385,7 +385,3 @@ root.bind("<Return>", compare)
 
 # Runs the tkinter program to keep window open
 root.mainloop()
-
-# Personal note to Kevin - check out https://stackoverflow.com/questions/66663179/how-to-use-windows-file-explorer-to-select-and-return-a-directory-using-python#:~:text=You%20can%20use%20Python's%20Tkinter,standard%20Windows%20folder%20selection%20dialog.&text=You%20can%20also%20simplify%20this%20and%20write%20tkinter.Tk().
-
-# This offers an explanation on potentially opening the standard Windows file library for file selection. This would be SO CLUTCH in making this more functional in the long-term instead of having to input. Tie it to buttons called "Select..." to pick each individual one for Inv/IFS. Implement by EOD Monday.
