@@ -270,40 +270,28 @@ def compare():
 
 
 # This function intakes the filename and exports a CSV of the difference data
-def export(*args):
+def export():
     # A large majority of this is copied from the "compare()" function, but sometimes includes very slight, key functional differences
 
-    # Sets variables to be the filename given
-    inv_name = str(inv_filename.get() + ".csv")
-    ifs_name = str(ifs_filename.get() + ".csv")
-
-    # Creates part number lists from the given file names
-    inv_list = create_inv_list(inv_filename.get() + ".csv")
-    ifs_list = create_ifs_list(ifs_filename.get() + ".csv")
-
     # Creates the list of quantity differences using create_dif_list given the file names
-    list_qty_dif = create_dif_list(inv_name, ifs_name)
+    list_qty_dif = create_dif_list()
     for i in range(len(list_qty_dif)):
         list_qty_dif[i] = [list_qty_dif[i][0], "Y", "Y", list_qty_dif[i][1], list_qty_dif[i][2]]
 
-    # Creates the list of quantities for Inv/IFS
-    inv_qty = inv_qty_list(inv_filename.get() + ".csv")
-    ifs_qty = ifs_qty_list(ifs_filename.get() + ".csv")
-
     # Removes leading zeroes from the inventor part number list
-    for i in range(len(inv_list)):
-        number_list = list(inv_list[i])
+    for i in range(len(inventor_pn)):
+        number_list = list(inventor_pn[i])
         remove_leading_zeros(number_list)
         new_number = ''.join(number_list)
-        inv_list[i] = new_number
+        inventor_pn[i] = new_number
 
     # This code block creates lists of indexes across both lists where the part numbers at those indexes match
     inv_idx_list = []
     ifs_idx_list = []
 
-    for i in range(len(inv_list)):
-        for j in range(len(ifs_list)):
-            if inv_list[i] == ifs_list[j]:
+    for i in range(len(inventor_pn)):
+        for j in range(len(ifs_pn)):
+            if inventor_pn[i] == ifs_pn[j]:
                 inv_idx_list.append(i)
                 ifs_idx_list.append(j)
 
@@ -311,22 +299,22 @@ def export(*args):
     ifs_master = []
 
     # Code block replaces common part numbers found in Inventor with "?", then appends all numbers that are not "?" to inv_masterpart of a list including the quantity and presence in Inventor/IFS
-    for i in range(len(inv_list)):
+    for i in range(len(inventor_pn)):
         for item in inv_idx_list:
             if i == item:
-                inv_list[i] = "?"
-    for i in range(len(inv_list)):
-        if inv_list[i] != "?":
-            inv_master.append([inv_list[i], "Y", "N", inv_qty[i], 0])
+                inventor_pn[i] = "?"
+    for i in range(len(inventor_pn)):
+        if inventor_pn[i] != "?":
+            inv_master.append([inventor_pn[i], "Y", "N", inventor_qty[i], 0])
 
     # Code block replaces common part numbers found in IFS with "&", then appends all numbers thht are not "&" to ifs_master as part of a list including the quantity and presence in Inventor/IFS
-    for i in range(len(ifs_list)):
+    for i in range(len(ifs_pn)):
         for item in ifs_idx_list:
             if i == item:
-                ifs_list[i] = "&"
-    for i in range(len(ifs_list)):
-        if ifs_list[i] != "&":
-            ifs_master.append([ifs_list[i], "N", "Y", 0, ifs_qty[i]])
+                ifs_pn[i] = "&"
+    for i in range(len(ifs_pn)):
+        if ifs_pn[i] != "&":
+            ifs_master.append([ifs_pn[i], "N", "Y", 0, ifs_qty[i]])
 
     # Creates dataframes from the inv_master, ifs_master, and the quantity differences list "qty" to represent Part Number, Found in Inventor/IFS, and quantities in both
     inventor_df = pd.DataFrame(inv_master,
