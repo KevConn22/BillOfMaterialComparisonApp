@@ -1,6 +1,6 @@
 # Bill of Material CSV Comparison Tool
 
-Intended for work at WestRock Company, this Python application is meant to compare the Inventor Bill of Material (BOM) with the Bill of Material in IFS (MBOM). By automating this process, the goal is to cut down on time taken for BOM comparison, decrease error in the comparison process, decrease engineering workload, and allow for easier engineer/manufacturer communication about BOM differences.
+Intended for work at WestRock Company, this Python application is meant to compare the Inventor Bill of Material (BOM) with the Bill of Material in IFS (MBOM), specifically that in the Engineering Part Revision section of IFS. By automating this process, the goal is to cut down on time taken for BOM comparison, decrease error in the comparison process, decrease engineering workload, and allow for easier engineer/manufacturer communication about BOM differences.
 
 ## How To Use
 
