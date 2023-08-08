@@ -2,6 +2,7 @@ import pandas as pd
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
+import os.path
 
 """
 -----------------------------------------------------------------------------------------------------
@@ -62,11 +63,15 @@ Any values that do not have a "True" designation therefore do not have a match i
 def inv_file_to_list():
     global inventor_pn
     global inventor_qty
+    global inv_file_name
     filepath = filedialog.askopenfilename()
+    inv_file_name = filepath
     file = open(filepath,'r')
     dI = pd.read_csv(file, usecols=['Part Number', 'Description', 'QTY'])
     inventor_pn = dI["Part Number"].values.tolist()
     inventor_qty = dI["QTY"].values.tolist()
+
+    inv_filename.set(filepath)
 
 """
 def inv_qty_list(filename):
@@ -83,6 +88,8 @@ def ifs_file_to_list():
     dIFS = pd.read_csv(file, usecols=['Part Number', 'Part Description', 'Quantity  Per Assembly'])
     ifs_pn = dIFS["Part Number"].values.tolist()
     ifs_qty = dIFS["Quantity  Per Assembly"].values.tolist()
+
+    ifs_filename.set(filepath)
 
 """
 def ifs_qty_list(filename):
@@ -271,12 +278,14 @@ def compare():
 
 # This function intakes the filename and exports a CSV of the difference data
 def export():
-    # A large majority of this is copied from the "compare()" function, but sometimes includes very slight, key functional differences
-
     # Creates the list of quantity differences using create_dif_list given the file names
     list_qty_dif = create_dif_list()
     for i in range(len(list_qty_dif)):
         list_qty_dif[i] = [list_qty_dif[i][0], "Y", "Y", list_qty_dif[i][1], list_qty_dif[i][2]]
+
+    # Creates the list of quantities for Inv/IFS
+    # inv_qty = inv_qty_list(inv_filename.get() + ".csv")
+    # ifs_qty = ifs_qty_list(ifs_filename.get() + ".csv")
 
     # Removes leading zeroes from the inventor part number list
     for i in range(len(inventor_pn)):
@@ -285,7 +294,7 @@ def export():
         new_number = ''.join(number_list)
         inventor_pn[i] = new_number
 
-    # This code block creates lists of indexes across both lists where the part numbers at those indexes match
+    # This code block creates lists of indexes where part numbers match
     inv_idx_list = []
     ifs_idx_list = []
 
@@ -324,12 +333,28 @@ def export():
     qty_df = pd.DataFrame(list_qty_dif,
                           columns=['Part Number', 'In Inventor?', 'In IFS?', 'Inventor Quantity', 'IFS Quantity'])
 
-    # Creates a final dataframe by concatenating the prior-developed dataframes above, then exports that to a csv
+
+    # Creates a final dataframe by concatenating each individual dataframe above into a final dataframe
     comparison_csv_df = [inventor_df, ifs_df, qty_df]
     comparison_final = pd.concat(comparison_csv_df)
 
-    comparison_final.to_csv("BOM Comparison Results.csv", encoding='utf-8', index=False)
+    pn = comparison_final[['Part Number']].to_string(index=False)
+    inv = comparison_final[['In Inventor?']].to_string(index=False)
+    ifs = comparison_final[['In IFS?']].to_string(index=False)
+    inv_q = comparison_final[['Inventor Quantity']].to_string(index=False)
+    ifs_q = comparison_final[['IFS Quantity']].to_string(index=False)
 
+    # Sets the GUI space to display each individual dataframe column
+    number.set(pn)
+    inventor.set(inv)
+    ifs_internal.set(ifs)
+    inventor_q.set(inv_q)
+    ifs_internal_q.set(ifs_q)
+
+    save_path = filedialog.askdirectory()
+    os.chdir(f'{save_path}')
+    comparison_final.to_csv("BOM Comparison Results.csv", encoding='utf-8', index=False)
+    completion.set("Done!")
 
 # Creates the GUI using Tkinter
 root = Tk()
@@ -342,22 +367,30 @@ root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
 # Creates the input location for the Inventor filename
-inv_filename = StringVar()
 inv_filename_entry = ttk.Button(mainframe, text="Select File", command=inv_file_to_list)
 inv_filename_entry.grid(column=4, row=2, sticky=(W, E))
 
 # Creates the input location for the IFS filename
-ifs_filename = StringVar()
 ifs_filename_entry = ttk.Button(mainframe, text="Select File", command=ifs_file_to_list)
 ifs_filename_entry.grid(column=4, row=4, sticky=(W, E))
 #inv_filename_entry = ttk.Entry(mainframe, width=12, textvariable=ifs_filename)
 
+#Creates directory names
+inv_filename = StringVar()
+ifs_filename = StringVar()
+ttk.Label(mainframe, textvariable=inv_filename).grid(column=3, row=2, sticky=E)
+ttk.Label(mainframe, textvariable=ifs_filename).grid(column=3, row=4, sticky=E)
+
 # Creates the submit button (hate this button.)
-ttk.Button(mainframe, text="Quick Compare (Enter)", command=compare).grid(column=3, row=5, sticky=N)
+ttk.Button(mainframe, text="Quick Compare (Display Only)", command=compare).grid(column=3, row=5, sticky=N)
 
 # Creates the labels for IFS and Inventor filename submission boxes
 ttk.Label(mainframe, text="Inventor BOM Filename: ").grid(column=3, row=1, sticky=N)
 ttk.Label(mainframe, text="IFS BOM Filename: ").grid(column=3, row=3, sticky=N)
+
+#Creates completion label
+completion = StringVar()
+ttk.Label(mainframe, textvariable=completion).grid(column=4,row=6,sticky=(N, W))
 
 # Creates final output variables
 number = StringVar()
