@@ -33,30 +33,6 @@ https://stackoverflow.com/questions/16923281/writing-a-pandas-dataframe-to-csv-f
 Should any more questions arise, you can reach me at kev.connell.22@gmail.com. Best of luck.
 
 -----------------------------------------------------------------------------------------------------
-
-Psuedocoding:
-
-For each individual column of the CSV:
-1. Must iterate through entire column, print to a new CSV for comparison.
-2. Must iterate through entire column on IFS CSV, printing to new column of new CSV
-
-Following this, we will have two columns, A and B. For each item, we have to somehow do the following:
-
-Determine the deltas of the columns, then report which one is in IFS vs. Inventor (if they belong to Column A or Column B)
-
-Idea:
-
-For Item in A:
-  For Item in B:
-    If ItemA == ItemB:
-      Print(True)
-
-For Item in B:
-  For Item in A:
-    If ItemB == ItemA:
-      Print(True)
-
-Any values that do not have a "True" designation therefore do not have a match in the other column, making them easy to tag after the fact.
 """
 
 # Creates the dataframe for each particular document, both the Inventor and IFS CSVs.
@@ -73,13 +49,7 @@ def inv_file_to_list():
 
     inv_filename.set(filepath)
 
-"""
-def inv_qty_list(filename):
-    dI = pd.read_csv(filename, usecols=['Part Number', 'Description', 'QTY'])
-    inventor_qty = dI["QTY"].values.tolist()
-    return inventor_qty
-"""
-
+#Creates the dataframe from the IFS document, accepting a filepath as an argument
 def ifs_file_to_list():
     global ifs_pn
     global ifs_qty
@@ -91,14 +61,8 @@ def ifs_file_to_list():
 
     ifs_filename.set(filepath)
 
-"""
-def ifs_qty_list(filename):
-    dIFS = pd.read_csv(filename, usecols=['Part Number', 'Part Description', 'Quantity  Per Assembly'])
-    ifs_qty = dIFS["Quantity  Per Assembly"].values.tolist()
-    return ifs_qty
-"""
-
-# Function for the process of removing zeroes
+# Function for the process of removing leading zeroes from the Inventor BOM
+#DELETE if IFS can be downloaded while keeping leading zeroes!!!
 def remove_leading_zeros(list_characters):
     while True:
         if list_characters[0] == "0":
@@ -118,17 +82,7 @@ def purge_list(list1, list2, list3):
 # Creates the list of correct pn's, but different quantities (returns list of part number and quantity in both Inventor and IFS)
 # Looks bad, but is fully functional. Returns list of lists, giving PN, Qty in Inv, and IFS QTY
 def create_dif_list():
-    """
-    # Note for any future reference: if you are coming up with errors after switching, check these categories. It might be that the names for the categories changed (while these are the current standards for Inv/IFS, they might change.) Simply update them here and elsewhere throughout the code and it should continue to run.
-    dI = pd.read_csv(f1, usecols=['Part Number', 'Description', 'QTY'])
-    dIFS = pd.read_csv(f2, usecols=['Part Number', 'Part Description', 'Quantity  Per Assembly'])
-
-    # Converts columns of dataframes into iterable lists
-    inventor_pn = dI["Part Number"].values.tolist()
-    inventor_qty = dI["QTY"].values.tolist()
-    ifs_pn = dIFS["Part Number"].values.tolist()
-    ifs_qty = dIFS["Quantity  Per Assembly"].values.tolist()
-    """
+    
     inv_qty_idx = []
     ifs_qty_idx = []
     # Removes leading zeros from the inventor part number list
@@ -180,37 +134,13 @@ def create_dif_list():
 
     return list_differences
 
-
-# Removes leading zeros from inventor_pn list (CSV from IFS does so, so must do so here)
-# OBSELETE as of 7/10/23; implemented directly into "compare" function
-def update_list_removed_zeros():
-    for i in range(len(inv_list)):
-        number_list = list(inv_list[i])
-        remove_leading_zeros(number_list)
-        new_number = ''.join(number_list)
-        inv_list[i] = new_number
-
-
-# Function comparing individual CSVs created earlier
+# Function ONLY comparing the two CSVs (does NOT export)
 def compare():
-    """
-    # Sets variables to be the filename given
-    inv_name = str(inv_filename.get() + ".csv")
-    ifs_name = str(ifs_filename.get() + ".csv")
-
-    # Creates part number lists from the given file names
-    inv_list = create_inv_list(inv_filename.get() + ".csv")
-    ifs_list = create_ifs_list(ifs_filename.get() + ".csv")
-    """
     # Creates the list of quantity differences using create_dif_list given the file names
     list_qty_dif = create_dif_list()
     for i in range(len(list_qty_dif)):
         list_qty_dif[i] = [list_qty_dif[i][0], "Y", "Y", list_qty_dif[i][1], list_qty_dif[i][2]]
-
-    # Creates the list of quantities for Inv/IFS
-    #inv_qty = inv_qty_list(inv_filename.get() + ".csv")
-    #ifs_qty = ifs_qty_list(ifs_filename.get() + ".csv")
-
+      
     # Removes leading zeroes from the inventor part number list
     for i in range(len(inventor_pn)):
         number_list = list(inventor_pn[i])
@@ -228,10 +158,10 @@ def compare():
                 inv_idx_list.append(i)
                 ifs_idx_list.append(j)
 
+    # Code block replaces common part numbers found in Inventor with "?", then appends all numbers that are not "?" to inv_masterpart of a list including the quantity and presence in Inventor/IFS
     inv_master = []
     ifs_master = []
 
-    # Code block replaces common part numbers found in Inventor with "?", then appends all numbers that are not "?" to inv_masterpart of a list including the quantity and presence in Inventor/IFS
     for i in range(len(inventor_pn)):
         for item in inv_idx_list:
             if i == item:
@@ -276,16 +206,12 @@ def compare():
     ifs_internal_q.set(ifs_q)
 
 
-# This function intakes the filename and exports a CSV of the difference data
+# This function compares the CSVs and exports results to a new CSV file
 def export():
     # Creates the list of quantity differences using create_dif_list given the file names
     list_qty_dif = create_dif_list()
     for i in range(len(list_qty_dif)):
         list_qty_dif[i] = [list_qty_dif[i][0], "Y", "Y", list_qty_dif[i][1], list_qty_dif[i][2]]
-
-    # Creates the list of quantities for Inv/IFS
-    # inv_qty = inv_qty_list(inv_filename.get() + ".csv")
-    # ifs_qty = ifs_qty_list(ifs_filename.get() + ".csv")
 
     # Removes leading zeroes from the inventor part number list
     for i in range(len(inventor_pn)):
@@ -304,10 +230,10 @@ def export():
                 inv_idx_list.append(i)
                 ifs_idx_list.append(j)
 
+    # Code block replaces common part numbers found in Inventor with "?", then appends all numbers that are not "?" to inv_masterpart of a list including the quantity and presence in Inventor/IFS
     inv_master = []
     ifs_master = []
-
-    # Code block replaces common part numbers found in Inventor with "?", then appends all numbers that are not "?" to inv_masterpart of a list including the quantity and presence in Inventor/IFS
+  
     for i in range(len(inventor_pn)):
         for item in inv_idx_list:
             if i == item:
@@ -344,6 +270,7 @@ def export():
     inv_q = comparison_final[['Inventor Quantity']].to_string(index=False)
     ifs_q = comparison_final[['IFS Quantity']].to_string(index=False)
 
+    # Sets the save path directory for the new CSV results file
     save_path = filedialog.askdirectory()
     os.chdir(f'{save_path}')
     comparison_final.to_csv("BOM Comparison Results.csv", encoding='utf-8', index=False)
@@ -356,8 +283,9 @@ def export():
     inventor_q.set(inv_q)
     ifs_internal_q.set(ifs_q)
 
+# Function that resets the entire program, deleting the data in order to allow for new input CSVs
 def clear():
-
+    # Clears inventor/ifs specific lists
     global inventor_pn
     global ifs_pn
     global inventor_qty
@@ -367,6 +295,7 @@ def clear():
     inventor_qty = []
     ifs_qty = []
 
+    # Clears inventor/ifs/qty dataframes
     global inventor_df
     global ifs_df
     global qty_df
@@ -374,17 +303,20 @@ def clear():
     ifs_df = []
     qty_df = []
 
+    # Clears results that are present in GUI
     number.set("")
     inventor.set("")
     ifs_internal.set("")
     inventor_q.set("")
     ifs_internal_q.set("")
 
+    # Clears previous file name and directory information, letting user choose new files
     inv_filename.set("")
     ifs_filename.set("")
     completion.set("")
 
-# Creates the GUI using Tkinter
+
+# Creates the GUI base using Tkinter
 root = Tk()
 root.title("Inventor v. IFS BOM Comparison")
 
@@ -394,34 +326,36 @@ mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
+# Creates the "WARNING" text at the bottom, instructing user to reset the GUI after every single iteration to ensure accurate results
 ttk.Label(mainframe, text="WARNING: You MUST click 'Reset' after every single comparison test, even if you want to do Quick Compare and then Compare/Export.").grid(column=3, row=11, sticky=N)
-# Creates the input location for the Inventor filename
+
+# Creates the input button for the Inventor filepath
 inv_filename_entry = ttk.Button(mainframe, text="Select File", command=inv_file_to_list)
 inv_filename_entry.grid(column=3, row=3, sticky=(W, E))
 
-# Creates the input location for the IFS filename
+# Creates the input button for the IFS filepath
 ifs_filename_entry = ttk.Button(mainframe, text="Select File", command=ifs_file_to_list)
 ifs_filename_entry.grid(column=3, row=6, sticky=(W, E))
 #inv_filename_entry = ttk.Entry(mainframe, width=12, textvariable=ifs_filename)
 
-#Creates directory names
+# Creates directory name displays in the GUI
 inv_filename = StringVar()
 ifs_filename = StringVar()
 ttk.Label(mainframe, textvariable=inv_filename).grid(column=3, row=2, sticky=N)
 ttk.Label(mainframe, textvariable=ifs_filename).grid(column=3, row=5, sticky=N)
 
-# Creates the submit button (hate this button.)
+# Creates the submit button (I hate this button.)
 ttk.Button(mainframe, text="Quick Compare (Display Only)", command=compare).grid(column=3, row=7, sticky=N)
 
 # Creates the labels for IFS and Inventor filename submission boxes
 ttk.Label(mainframe, text="Inventor BOM Filename: ").grid(column=3, row=1, sticky=N)
 ttk.Label(mainframe, text="IFS BOM Filename: ").grid(column=3, row=4, sticky=N)
 
-#Creates completion label
+# Creates the completion status label next to the "Export" button
 completion = StringVar()
 ttk.Label(mainframe, textvariable=completion).grid(column=4,row=8,sticky=(N, W))
 
-# Creates final output variables
+# Creates the variables where the output dataframes will be displayed
 number = StringVar()
 inventor = StringVar()
 ifs_internal = StringVar()
@@ -435,16 +369,17 @@ ttk.Label(mainframe, textvariable=ifs_internal).grid(column=3, row=9, sticky=N)
 ttk.Label(mainframe, textvariable=inventor_q).grid(column=4, row=9, sticky=W)
 ttk.Label(mainframe, textvariable=ifs_internal_q).grid(column=5, row=9, sticky=W)
 
-# Creates button for export to external file
+# Creates button for the "Compare/Export" feature
 ttk.Button(mainframe, text="Compare/Export to CSV", command=export).grid(column=3, row=8, sticky=N)
 
+# Creates button for the "Clear" feature
 ttk.Button(mainframe, text="Reset", command=clear).grid(column=3,row=10,sticky=N)
 
-# Makes it look more aesthetic by adding padding around each grid element
+# Added padding around each element in the grid for visual purposes
 for child in mainframe.winfo_children():
     child.grid_configure(padx=10, pady=10)
 
-# Binds "enter" to "Compare" button
+# Binds "enter" to "Quick Compare" button
 root.bind("<Return>", compare)
 
 # Runs the tkinter program to keep window open
