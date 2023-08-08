@@ -333,16 +333,21 @@ def export():
     qty_df = pd.DataFrame(list_qty_dif,
                           columns=['Part Number', 'In Inventor?', 'In IFS?', 'Inventor Quantity', 'IFS Quantity'])
 
-
     # Creates a final dataframe by concatenating each individual dataframe above into a final dataframe
     comparison_csv_df = [inventor_df, ifs_df, qty_df]
     comparison_final = pd.concat(comparison_csv_df)
 
+    # Divides the final dataframe along column lines, helping to make the final output more readable in the GUI
     pn = comparison_final[['Part Number']].to_string(index=False)
     inv = comparison_final[['In Inventor?']].to_string(index=False)
     ifs = comparison_final[['In IFS?']].to_string(index=False)
     inv_q = comparison_final[['Inventor Quantity']].to_string(index=False)
     ifs_q = comparison_final[['IFS Quantity']].to_string(index=False)
+
+    save_path = filedialog.askdirectory()
+    os.chdir(f'{save_path}')
+    comparison_final.to_csv("BOM Comparison Results.csv", encoding='utf-8', index=False)
+    completion.set("Done!")
 
     # Sets the GUI space to display each individual dataframe column
     number.set(pn)
@@ -351,10 +356,33 @@ def export():
     inventor_q.set(inv_q)
     ifs_internal_q.set(ifs_q)
 
-    save_path = filedialog.askdirectory()
-    os.chdir(f'{save_path}')
-    comparison_final.to_csv("BOM Comparison Results.csv", encoding='utf-8', index=False)
-    completion.set("Done!")
+def clear():
+
+    global inventor_pn
+    global ifs_pn
+    global inventor_qty
+    global ifs_qty
+    inventor_pn = []
+    ifs_pn = []
+    inventor_qty = []
+    ifs_qty = []
+
+    global inventor_df
+    global ifs_df
+    global qty_df
+    inventor_df = []
+    ifs_df = []
+    qty_df = []
+
+    number.set("")
+    inventor.set("")
+    ifs_internal.set("")
+    inventor_q.set("")
+    ifs_internal_q.set("")
+
+    inv_filename.set("")
+    ifs_filename.set("")
+    completion.set("")
 
 # Creates the GUI using Tkinter
 root = Tk()
@@ -408,6 +436,8 @@ ttk.Label(mainframe, textvariable=ifs_internal_q).grid(column=5, row=8, sticky=W
 
 # Creates button for export to external file
 ttk.Button(mainframe, text="Compare/Export to CSV", command=export).grid(column=3, row=6, sticky=N)
+
+ttk.Button(mainframe, text="Reset", command=clear).grid(column=3,row=9,sticky=N)
 
 # Makes it look more aesthetic by adding padding around each grid element
 for child in mainframe.winfo_children():
