@@ -9,12 +9,7 @@ import os.path
 
 Foreword:
 
-Hey everyone.
-
-My name is Kevin Connell, and I am/was a Mechanical Engineering Intern at WestRock in Orlando, working from May 2023-August 2023. During my time there, I found that there was often a lack of precision between the 
-manufacturing and engineering departments, especially with parts being missing from the floor's MBOM that were on the EBOM, and vice versa.
-
-That being said, this code was created as a personal project for the further improvement of WestRock's Packaging Machinery & Automation (PMA) division. The overall purporse of this is to take two BOMs
+This code was created as a personal project for the further improvement of WestRock's Packaging Machinery & Automation (PMA) division. The overall purporse of this is to take two BOMs
 (one from Inventor, one from IFS) and compare them, returning a list of differences including differences in composition (for example, if a part number was found in Inventor but not IFS and vice versa) as well as 
 differences in quantity (for example, if IFS said there were 3 of part 12345 while Inventor said there were 2 of that part). The goal is to help quell the issue stated above, decreasing error across BOMs and easily
 identifying any errors if one is to arise. This will decrease production time, decrease errors, and decrease the amount of troubleshooting and painstaking line-by-line comparison on the engineering side when such
