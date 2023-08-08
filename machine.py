@@ -7,11 +7,13 @@ import os.path
 
 """
 
+-------------------------------------------------------------------------------------------------------------
 What's up!
 
 It's me again, this time trying something that's probably going to be more difficult. Instead of simply running a per-basis comparison, I am instead going to be doing a whole-machine comparison.
 
 Good luck, and let's see the code!
+-------------------------------------------------------------------------------------------------------------
 
 """
 
