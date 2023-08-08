@@ -28,6 +28,8 @@ https://stackoverflow.com/questions/16923281/writing-a-pandas-dataframe-to-csv-f
 Should any more questions arise, you can reach me at kev.connell.22@gmail.com. Best of luck.
 
 -----------------------------------------------------------------------------------------------------
+
+Psuedocoding:            
 """
 
 # Creates the dataframe for each particular document, both the Inventor and IFS CSVs.
