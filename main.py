@@ -50,9 +50,9 @@ def ifs_file_to_list():
     global ifs_qty
     filepath = filedialog.askopenfilename()
     file = open(filepath,'r')
-    dIFS = pd.read_csv(file, usecols=['Part Number', 'Part Description', 'Quantity  Per Assembly'])
-    ifs_pn = dIFS["Part Number"].values.tolist()
-    ifs_qty = dIFS["Quantity  Per Assembly"].values.tolist()
+    dIFS = pd.read_csv(file, usecols=['Component Part', 'Component Part Description', 'Qty per Assembly'])
+    ifs_pn = dIFS["Component Part"].values.tolist()
+    ifs_qty = dIFS["Qty per Assembly"].values.tolist()
 
     ifs_filename.set(filepath)
 
