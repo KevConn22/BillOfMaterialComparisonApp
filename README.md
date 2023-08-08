@@ -1,6 +1,6 @@
 # Bill of Material CSV Comparison Tool
 
-Intended for work at WestRock Company, this Python application is meant to compare the Engineering Bill of Material (EBOM) with the Manufacturing Bill of Material (MBOM). By automating this process, the goal is to cut down on time taken for comparison, error reduction in the comparison process, decreased engineering workload, and enhanced communication between engineering/manufacturing needs and expectations.
+Intended for work at WestRock Company, this Python application is meant to compare the Engineering Bill of Material (EBOM) with the Manufacturing Bill of Material (MBOM). By automating this process, the goal is to cut down on time taken for BOM comparison, decrease error in the comparison process, decrease engineering workload, and allow for easier engineer/manufacturer communication about BOM differences.
 
 ## How To Use
 
