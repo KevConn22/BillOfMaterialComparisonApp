@@ -394,31 +394,32 @@ mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
+ttk.Label(mainframe, text="WARNING: You MUST click 'Reset' after every single comparison test, even if you want to do Quick Compare and then Compare/Export.").grid(column=3, row=11, sticky=N)
 # Creates the input location for the Inventor filename
 inv_filename_entry = ttk.Button(mainframe, text="Select File", command=inv_file_to_list)
-inv_filename_entry.grid(column=4, row=2, sticky=(W, E))
+inv_filename_entry.grid(column=3, row=3, sticky=(W, E))
 
 # Creates the input location for the IFS filename
 ifs_filename_entry = ttk.Button(mainframe, text="Select File", command=ifs_file_to_list)
-ifs_filename_entry.grid(column=4, row=4, sticky=(W, E))
+ifs_filename_entry.grid(column=3, row=6, sticky=(W, E))
 #inv_filename_entry = ttk.Entry(mainframe, width=12, textvariable=ifs_filename)
 
 #Creates directory names
 inv_filename = StringVar()
 ifs_filename = StringVar()
-ttk.Label(mainframe, textvariable=inv_filename).grid(column=3, row=2, sticky=E)
-ttk.Label(mainframe, textvariable=ifs_filename).grid(column=3, row=4, sticky=E)
+ttk.Label(mainframe, textvariable=inv_filename).grid(column=3, row=2, sticky=N)
+ttk.Label(mainframe, textvariable=ifs_filename).grid(column=3, row=5, sticky=N)
 
 # Creates the submit button (hate this button.)
-ttk.Button(mainframe, text="Quick Compare (Display Only)", command=compare).grid(column=3, row=5, sticky=N)
+ttk.Button(mainframe, text="Quick Compare (Display Only)", command=compare).grid(column=3, row=7, sticky=N)
 
 # Creates the labels for IFS and Inventor filename submission boxes
 ttk.Label(mainframe, text="Inventor BOM Filename: ").grid(column=3, row=1, sticky=N)
-ttk.Label(mainframe, text="IFS BOM Filename: ").grid(column=3, row=3, sticky=N)
+ttk.Label(mainframe, text="IFS BOM Filename: ").grid(column=3, row=4, sticky=N)
 
 #Creates completion label
 completion = StringVar()
-ttk.Label(mainframe, textvariable=completion).grid(column=4,row=6,sticky=(N, W))
+ttk.Label(mainframe, textvariable=completion).grid(column=4,row=8,sticky=(N, W))
 
 # Creates final output variables
 number = StringVar()
@@ -428,16 +429,16 @@ inventor_q = StringVar()
 ifs_internal_q = StringVar()
 
 # Creates final output display areas on GUI
-ttk.Label(mainframe, textvariable=number).grid(column=1, row=8, sticky=E)
-ttk.Label(mainframe, textvariable=inventor).grid(column=2, row=8, sticky=E)
-ttk.Label(mainframe, textvariable=ifs_internal).grid(column=3, row=8, sticky=N)
-ttk.Label(mainframe, textvariable=inventor_q).grid(column=4, row=8, sticky=W)
-ttk.Label(mainframe, textvariable=ifs_internal_q).grid(column=5, row=8, sticky=W)
+ttk.Label(mainframe, textvariable=number).grid(column=1, row=9, sticky=E)
+ttk.Label(mainframe, textvariable=inventor).grid(column=2, row=9, sticky=E)
+ttk.Label(mainframe, textvariable=ifs_internal).grid(column=3, row=9, sticky=N)
+ttk.Label(mainframe, textvariable=inventor_q).grid(column=4, row=9, sticky=W)
+ttk.Label(mainframe, textvariable=ifs_internal_q).grid(column=5, row=9, sticky=W)
 
 # Creates button for export to external file
-ttk.Button(mainframe, text="Compare/Export to CSV", command=export).grid(column=3, row=6, sticky=N)
+ttk.Button(mainframe, text="Compare/Export to CSV", command=export).grid(column=3, row=8, sticky=N)
 
-ttk.Button(mainframe, text="Reset", command=clear).grid(column=3,row=9,sticky=N)
+ttk.Button(mainframe, text="Reset", command=clear).grid(column=3,row=10,sticky=N)
 
 # Makes it look more aesthetic by adding padding around each grid element
 for child in mainframe.winfo_children():
