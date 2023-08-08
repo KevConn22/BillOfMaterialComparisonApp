@@ -50,4 +50,4 @@ Packages Used: pandas, tkinter, os.path
 
 ## Outcomes
 
-This code, in its current limited usage, has already proven to be extremely beneficial. Manually comparing Bills of Material is something that is tedious and oftentimes results in errors. Based upon a week's worth of work, this was able to reduce error of CSV comparison by 11% and decrease the time taken by ~33% (this number goes even higher as the BOM increases in length). So, it is successful in its current usage, with testing benchmarks to prove it.
+This code, in its current limited usage, has already proven to be extremely beneficial. Manually comparing Bills of Material is something that is tedious and oftentimes results in errors. Based upon a week's worth of work, this was able to reduce error of CSV comparison by 11% and decrease the time taken by ~75% (this number goes even higher as the BOM increases in length). So, it is successful in its current usage, with testing benchmarks to prove it.
