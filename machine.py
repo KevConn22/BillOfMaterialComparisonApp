@@ -50,7 +50,10 @@ def inv_files_to_list():
     # User input file directory for folder containing all file CSVs
     csv_folder_path = filedialog.askdirectory()
     csv_files = [file for file in os.listdir(csv_folder_path) if file.endswith(".csv")]
-    
+
+    print(csv_files)
+
+    """
     # Iterating through every CSV to add P/N, Qty, and Name to a tuple
     for file in folder:
         name = os.path.basename(path).split('/')[-1]
@@ -65,7 +68,7 @@ def inv_files_to_list():
             
 
     # This is the updated p/n, qty, and name list
-    
+    """
       
 def inv_file_to_list():
     global inventor_pn
