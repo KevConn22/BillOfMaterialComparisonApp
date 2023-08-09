@@ -4,7 +4,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 import os.path
-
+import os
 """
 
 -------------------------------------------------------------------------------------------------------------
@@ -34,7 +34,39 @@ abstraction of parts:
     for i in range
         
 """
+def inv_files_to_list():
+    # Global list variables for the overall parts list, quantity list, and directory names
+    global inventor_pn
+    global inventor_qty
+    global inv_directory_names
 
+    # Initializes all of the lists that we will need for the program, both in the process (master list) and for global use (top three lists)
+    inventor_pn = []
+    inventor_qty = []
+    inv_directory_names = []
+
+    inventor_master = []
+    
+    # User input file directory for folder containing all file CSVs
+    csv_folder_path = filedialog.askdirectory()
+    csv_files = [file for file in os.listdir(csv_folder_path) if file.endswith(".csv")]
+    
+    # Iterating through every CSV to add P/N, Qty, and Name to a tuple
+    for file in folder:
+        name = os.path.basename(path).split('/')[-1]
+        dI = pd.read_csv(file, usecols=['Part Number', 'Description', 'QTY'])
+        inventor_pn_temp = dI["Part Number"].values.tolist()
+        inventor_qty_temp = dI["QTY"].values.tolist()
+        inventor_master.append((name, inventor_pn_temp, inventor_qty_temp))
+        
+    # This is the "splitting" of the BOMs along subassembly lines. Splits and adds quantity information
+    while True:
+        for part in inventor_master:
+            
+
+    # This is the updated p/n, qty, and name list
+    
+      
 def inv_file_to_list():
     global inventor_pn
     global inventor_qty
