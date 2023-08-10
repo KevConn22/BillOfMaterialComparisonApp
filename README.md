@@ -8,7 +8,7 @@ Intended for work at WestRock Company, this Python application is meant to compa
 
 If you do not have any edits necessary to the code, then you can download/run the program as follows:
 
-1. Download the .exe that is in Dropbox (https://www.dropbox.com/scl/fi/nfbcl5bv8p3cxtz6qougl/BOM-Comparison.exe?rlkey=44mlgl3l2me15rrm605i0if09&dl=0)
+1. Download the .exe that is in Dropbox (https://www.dropbox.com/scl/fo/brx608qkhvctu5utvmhy5/h?rlkey=gt91eemord7723figlqmq5n99&dl=0)
 2. Run the program on your local machine. You might be given a message saying it's an unknown program: click "Run Anyway" if this is the case
 
 ### With Editing:
