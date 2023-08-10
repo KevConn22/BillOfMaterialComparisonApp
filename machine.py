@@ -53,7 +53,31 @@ def inv_files_to_list():
 
     print(csv_files)
 
+    # This has worked successfully. It returns every single filename in the directory.
+
     """
+
+_____________________________________________________________________________________________________________________________________________________________
+    I'm just writing a note here to try and understand my thought process for the data structure and iteration of this particular.
+
+    Somehow, I have to make a structure containing the filename, the parts list, and the quantity list for each part. I'm thinking of making each one a tuple, and then iterating through each individual list item until the program has checked through every individual part. I need to compare each and every filename with each part in each CSV BOM. So something like this:
+
+    for object[0] in parts_list:
+        for object in parts_list:
+            for object in object[2]:
+                if object[0] == object:
+                    replace BOM information with other subassy parts/information                 
+
+    Theoretically, this would work. It works as follows:
+
+    1. You iterate through every file in the folder
+    2. For every file in the folder, you iterate through every data structure in the master list
+    3. For every data structure in the master list, you iterate through every object of the p/n list contained in the tuple
+    4. If the object within the p/n list is the same as the filename, you replace the information on the qty_list and pn_list with the filename qty, pn information, and multiply all parts of that qty_list with the qty of the subassembly in the other qty_list (nested in data structure)
+_______________________________________________________________________________________________________________________________________________________________
+
+    """
+    # This has not worked successfully. Last progress: 8/9/23
     # Iterating through every CSV to add P/N, Qty, and Name to a tuple
     for file in folder:
         name = os.path.basename(path).split('/')[-1]
@@ -61,7 +85,8 @@ def inv_files_to_list():
         inventor_pn_temp = dI["Part Number"].values.tolist()
         inventor_qty_temp = dI["QTY"].values.tolist()
         inventor_master.append((name, inventor_pn_temp, inventor_qty_temp))
-        
+
+    """
     # This is the "splitting" of the BOMs along subassembly lines. Splits and adds quantity information
     while True:
         for part in inventor_master:
